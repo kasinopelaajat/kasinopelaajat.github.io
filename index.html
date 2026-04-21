@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Fast Cashouts — Sportsbook &amp; Casino</title>
+
+<style>
+/* =========================================================================
+   MUOKKAA TÄSTÄ
+   ========================================================================= */
+:root {
+  /* TAUSTAKUVA — sportsbook-fiilistä tai muu. Vaihda omaan. */
+  --bg-image:   url('bg.webp');
+  --bg-color:   #0c1a1f;                      /* fallback jos kuva ei lataudu */
+  --bg-overlay: rgba(12,26,31,0.35);          /* tummennus kuvan päälle */
+
+  /* Sivugradientit (vignette vasen/oikea) */
+  --side-fade:  rgba(12,26,31,0.92);
+
+  /* VÄRIT */
+  --logo-color:       #ffffff;
+  --tagline-color:    #ffffff;
+  --accent-color:     #ff7a1a;                /* otsikon 1. rivi (FAST) */
+  --main-color:       #f1e6c9;                /* otsikon 2. rivi (CASHOUTS) */
+  --promo-color:      #ffffff;
+  --cta-bg:           #22c55e;
+  --cta-bg-hover:     #16a34a;
+  --cta-text:         #ffffff;
+  --disclaimer-color: rgba(255,255,255,0.55);
+  --disclaimer-bar:   rgba(0,0,0,0.25);
+
+  /* FONTIT */
+  --display-font: 'Arial Black', 'Helvetica Neue', Impact, sans-serif;
+  --body-font:    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+}
+
+/* ========================================================================= */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background: var(--bg-color);
+  font-family: var(--body-font);
+  color: #fff;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.ad {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+  background: var(--bg-color);
+  container-type: size;
+  container-name: ad;
+}
+
+/* Taustakuva */
+.ad__bg {
+  position: absolute;
+  inset: 0;
+  background-image: var(--bg-image);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 0;
+}
+/* Yleistummennus kuvan päälle */
+.ad__bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--bg-overlay);
+}
+
+/* Sivugradientit — oikea ja vasen reuna tummennetaan (vignette) */
+.ad__vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(to right,  var(--side-fade) 0%, rgba(0,0,0,0) 22%, rgba(0,0,0,0) 78%, var(--side-fade) 100%),
+    linear-gradient(to bottom, rgba(0,0,0,0) 60%, rgba(0,0,0,0.45) 100%);
+}
+
+/* =========================================================================
+   PINORAKENNE — disclaimer aina pohjassa
+   ========================================================================= */
+.ad__stage {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.ad__main {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: clamp(10px, 3cqmin, 40px);
+  gap: clamp(5px, 1.4cqmin, 16px);
+  overflow: hidden;
+}
+
+.ad__disclaimer {
+  flex: 0 0 auto;
+  padding: clamp(4px, 1cqmin, 10px) clamp(10px, 2.5cqmin, 24px);
+  font-size: clamp(7px, 0.9cqmin, 11px);
+  line-height: 1.35;
+  color: var(--disclaimer-color);
+  background: var(--disclaimer-bar);
+  text-align: center;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+
+/* =========================================================================
+   LOGO
+   ========================================================================= */
+.ad__logo {
+  width: clamp(80px, 28cqmin, 280px);
+  max-width: 70cqi;
+  max-height: 18cqb;
+  height: auto;
+  object-fit: contain;
+  flex-shrink: 0;
+  display: block;
+}
+
+/* =========================================================================
+   TAGLINE (pieni teksti logon alla: "SPORTSBOOK · CASINO")
+   ========================================================================= */
+.ad__tagline {
+  font-size: clamp(8px, 1.1cqmin, 12px);
+  letter-spacing: 0.32em;
+  font-weight: 600;
+  color: var(--tagline-color);
+  opacity: 0.9;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-bottom: clamp(4px, 1cqmin, 10px);
+}
+
+/* =========================================================================
+   OTSIKKO — kaksi riviä, eri värit
+   ========================================================================= */
+.ad__headline {
+  font-family: var(--display-font);
+  font-weight: 900;
+  line-height: 0.92;
+  letter-spacing: -0.015em;
+  text-transform: uppercase;
+  font-size: clamp(22px, 11cqmin, 140px);
+  flex-shrink: 0;
+  max-width: 100%;
+  text-shadow: 0 clamp(2px, 0.6cqmin, 8px) clamp(6px, 1.8cqmin, 20px) rgba(0,0,0,0.5);
+}
+.ad__headline span { display: block; }
+.ad__headline .accent { color: var(--accent-color); }
+.ad__headline .main   { color: var(--main-color); }
+
+/* =========================================================================
+   PROMO-TEKSTI
+   ========================================================================= */
+.ad__promo {
+  max-width: 68ch;
+  font-size: clamp(11px, 1.5cqmin, 17px);
+  line-height: 1.4;
+  padding: 0 8px;
+  color: var(--promo-color);
+  text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+}
+
+/* =========================================================================
+   CTA
+   ========================================================================= */
+.ad__cta {
+  display: inline-block;
+  background: var(--cta-bg);
+  color: var(--cta-text);
+  font-family: var(--body-font);
+  font-weight: 800;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: clamp(12px, 2cqmin, 20px);
+  padding: clamp(10px, 2cqmin, 20px) clamp(24px, 6cqmin, 90px);
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  max-width: 100%;
+  box-shadow: 0 4px 0 rgba(0,0,0,0.22), 0 8px 24px rgba(0,0,0,0.35);
+}
+.ad__cta:hover, .ad__cta:active { background: var(--cta-bg-hover); }
+
+/* =========================================================================
+   STACKED-MOODI — sopeutuminen tilan mukaan
+   ========================================================================= */
+
+/* Matalampi — pienennä logo, piilota tagline & promo vähitellen */
+@container ad (max-aspect-ratio: 2.4) and (max-height: 320px) {
+  .ad__promo { display: none; }
+}
+@container ad (max-aspect-ratio: 2.4) and (max-height: 240px) {
+  .ad__tagline { display: none; }
+  .ad__logo { width: clamp(70px, 24cqmin, 180px); max-height: 28cqb; }
+}
+
+/* Hyvin matala — pienempi otsikko */
+@container ad (max-aspect-ratio: 2.4) and (max-height: 180px) {
+  .ad__headline { font-size: clamp(16px, 13cqmin, 40px); }
+}
+
+/* Ultra-matala — piilota otsikko, jätä logo + CTA + disclaimer */
+@container ad (max-aspect-ratio: 2.4) and (max-height: 130px) {
+  .ad__headline { display: none; }
+}
+
+/* Kapea pystysuora (160x600 skyscraper) */
+@container ad (max-width: 220px) and (max-aspect-ratio: 1) {
+  .ad__logo { width: clamp(80px, 70cqi, 170px); }
+  .ad__headline {
+    font-size: clamp(16px, 12cqi, 34px);
+    letter-spacing: 0;
+  }
+  .ad__promo { display: none; }
+  .ad__tagline { letter-spacing: 0.2em; }
+  .ad__cta {
+    font-size: clamp(11px, 4.5cqi, 15px);
+    padding: clamp(8px, 3cqi, 14px) clamp(14px, 6cqi, 32px);
+    letter-spacing: 0.03em;
+  }
+}
+
+/* Tosi pieni iframe — jätä logo + CTA + disclaimer */
+@container ad (max-width: 180px) and (max-height: 180px) {
+  .ad__headline, .ad__tagline { display: none; }
+}
+
+/* =========================================================================
+   ROW-MOODI — leveät bannerit, disclaimer pohjassa
+   ========================================================================= */
+@container ad (min-aspect-ratio: 2.4) {
+  .ad__main {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    text-align: left;
+    padding: clamp(6px, 2cqmin, 16px);
+    gap: clamp(10px, 3cqi, 40px);
+  }
+  .ad__tagline, .ad__promo { display: none; }
+
+  .ad__logo {
+    width: auto;
+    height: clamp(24px, 55cqb, 100px);
+    max-width: 26cqi;
+    max-height: 78cqb;
+  }
+  .ad__headline {
+    font-size: clamp(14px, 24cqb, 44px);
+    line-height: 0.95;
+  }
+  .ad__cta {
+    font-size: clamp(10px, 18cqb, 18px);
+    padding: clamp(6px, 12cqb, 14px) clamp(16px, 22cqb, 42px);
+  }
+  .ad__disclaimer {
+    padding: clamp(2px, 5cqb, 6px) clamp(8px, 2cqi, 16px);
+    font-size: clamp(7px, 8cqb, 10px);
+    line-height: 1.2;
+  }
+}
+
+/* Super-matala row (320x50): logo + CTA + disclaimer */
+@container ad (min-aspect-ratio: 2.4) and (max-height: 75px) {
+  .ad__headline { display: none; }
+  .ad__main { padding: clamp(3px, 1cqmin, 8px); gap: clamp(6px, 2cqi, 18px); }
+}
+
+/* Kapea row (468x60) */
+@container ad (min-aspect-ratio: 2.4) and (max-width: 520px) and (min-height: 76px) {
+  .ad__headline { font-size: clamp(12px, 18cqb, 22px); }
+}
+</style>
+</head>
+
+<body>
+<div class="ad">
+
+  <div class="ad__bg" aria-hidden="true"></div>
+  <div class="ad__vignette" aria-hidden="true"></div>
+
+  <div class="ad__stage">
+
+    <div class="ad__main">
+
+      <!-- LOGO -->
+      <img
+        class="ad__logo"
+        alt="Pelikioski"
+        src="casino.webp"
+        loading="eager"
+        decoding="async"
+        fetchpriority="high"
+      />
+
+      <!-- TAGLINE (pieni teksti logon alla) -->
+      <div class="ad__tagline">SPORTSBOOK - CASINO</div>
+
+      <!-- PÄÄOTSIKKO -->
+      <h1 class="ad__headline">
+        <span class="accent">FAST</span>
+        <span class="main">CASHOUTS</span>
+      </h1>
+
+      <!-- PROMO-TEKSTI -->
+      <p class="ad__promo">
+        Join 24/7 betting action on the World's biggest Sportsbook and online casino today!
+      </p>
+
+      <!-- CTA -->
+      <a class="ad__cta" href="stake.com/?c=pJ3dfFmZ" target="_blank" rel="noopener">
+        OPEN AN ACCOUNT
+      </a>
+
+    </div>
+
+    <!-- DISCLAIMER — aina näkyvissä -->
+    <p class="ad__disclaimer">
+      18+ · Play responsibly · Gambling can be addictive, only gamble with what you can afford to lose · T&amp;Cs apply
+    </p>
+
+  </div>
+</div>
+</body>
+</html>
